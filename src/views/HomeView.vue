@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import InternList from '@/components/InternList.vue'
+import InternList from '@/components/InternList.vue';
 </script>

@@ -10,14 +10,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+
 import axios from 'axios';
 import { useRoute } from 'vue-router';
+
 import ThePagination from '@/components/ThePagination.vue';
-import type { Intern } from '@/models/intern';
 import { usePaginationStore } from '@/store/pagination';
 
+import type { Intern } from '@/models/intern';
+
 const route = useRoute();
-const paginationStore = usePaginationStore(); 
+const paginationStore = usePaginationStore();
 const interns = ref<Intern[]>([]);
 
 let currentPage = ref(route.params.page ? Number(route.params.page) : 1);
@@ -26,7 +29,7 @@ async function getInterns(page: number) {
   const limit = 8;
   const skip = limit * (page - 1);
   const API_URL = `https://dummyjson.com/users?limit=${limit}&skip=${skip}`;
-  
+
   try {
     const response = await axios.get(API_URL);
 
@@ -38,10 +41,13 @@ async function getInterns(page: number) {
       console.error('HTTP error:', response.status);
     }
   } catch (error) {
-      console.error('Network error:', error);
+    console.error('Network error:', error);
   }
 }
 
 onMounted(() => getInterns(currentPage.value));
-watch(() => route.params.page, (newPage) => getInterns(Number(newPage)));
+watch(
+  () => route.params.page,
+  (newPage) => getInterns(Number(newPage))
+);
 </script>
