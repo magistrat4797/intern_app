@@ -25,7 +25,7 @@ const interns = ref<Intern[]>([]);
 
 let currentPage = ref(route.params.page ? Number(route.params.page) : 1);
 
-async function getInterns(page: number) {
+const getInterns = async (page: number) => {
   const limit = 8;
   const skip = limit * (page - 1);
   const API_URL = `https://dummyjson.com/users?limit=${limit}&skip=${skip}`;
