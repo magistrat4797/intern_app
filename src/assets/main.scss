@@ -5,3 +5,7 @@
 body {
   @apply bg-light-gray;
 }
+
+a, button {
+  transition: ease-in-out .2s;
+}

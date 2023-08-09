@@ -5,6 +5,7 @@
         <h1>User list</h1>
       </BaseHeading>
       <BaseCard>
+        <SearchBox />
         <InternList />
       </BaseCard>
       <ThePagination />
@@ -17,5 +18,6 @@ import MainContainer from '@/components/MainContainer.vue';
 import BaseHeading from '@/components/BaseHeading.vue';
 import BaseCard from '@/components/BaseCard.vue';
 import InternList from '@/components/InternList.vue';
+import SearchBox from '@/components/SearchBox.vue';
 import ThePagination from '@/components/ThePagination.vue';
 </script>

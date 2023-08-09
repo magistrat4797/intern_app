@@ -1,5 +1,5 @@
 <template>
-  <div class="heading-block mb-5 text-2xl md:text-3xl text-center md:text-left text-base-gray">
+  <div class="heading-block mb-5 text-2xl sm:text-3xl text-center sm:text-left text-base-gray">
     <slot/>
   </div>
 </template>

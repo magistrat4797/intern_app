@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { usePaginationStore } from '@/store/pagination';
+import { usePaginationStore } from '@/store/paginationStore';
 
 export default function usePagination() {
   const route = useRoute();

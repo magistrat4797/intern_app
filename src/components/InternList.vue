@@ -9,59 +9,49 @@
     </thead>
     <tbody>
       <tr v-for="intern in interns" :key="intern.id" class="odd:bg-light-gray">
-        <td class="rounded-l w-[60px] md:w-[130px]">
-          <span class="block avatar overflow-hidden rounded-full w-[40px] h-[40px] md:w-[45px] md:h-[45px] bg-gray-200">
+        <td class="rounded-l w-[60px] sm:w-[130px]">
+          <span class="block avatar overflow-hidden rounded-full w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] bg-gray-200">
             <img :src="intern.image" />
           </span>
         </td>
         <td>{{ intern.firstName }} {{ intern.lastName }}</td>
-        <td class="rounded-r w-[70px] md:w-[130px]">btn</td>
+        <td class="rounded-r w-[70px] sm:w-[130px]">btn</td>
       </tr>
     </tbody>
   </table>
 </template>
 
-<style lang="scss" scoped>
-  .intern-list-table {
-    tr {
-      th,
-      td {
-        @apply p-2 md:p-[10px];
-      }
-      th {
-        @apply h-[55px];
-      }
-      td {
-        @apply h-[65px];
-      }
-    }
-  }
-</style>
-
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 
-import { usePaginationStore } from '@/store/pagination';
+import { usePaginationStore } from '@/store/paginationStore';
+import { useSearchStore } from '@/store/searchStore';
 
 import type { Intern } from '@/models/intern';
 
+const searchStore = useSearchStore();
 const route = useRoute();
 const paginationStore = usePaginationStore();
 const interns = ref<Intern[]>([]);
 
+const LIMIT_PER_PAGE = 8;
+
 let currentPage = ref(route.params.page ? Number(route.params.page) : 1);
 
-const getInterns = async (page: number) => {
-  const limit = 8;
+const getInterns = async (page: number, limit: number) => {
   const skip = limit * (page - 1);
-  const API_URL = `https://dummyjson.com/users?limit=${limit}&skip=${skip}`;
+  let API_URL;
+  if (searchStore.query) {
+    API_URL = `https://dummyjson.com/users/search?q=${searchStore.query}&limit=${limit}&skip=${skip}`;
+  } else {
+    API_URL = `https://dummyjson.com/users?limit=${limit}&skip=${skip}`;
+  }
 
   try {
     const response = await axios.get(API_URL);
-
     if (response.status >= 200 && response.status < 300) {
       const users = response.data.users as Intern[];
       paginationStore.setTotalPages(Math.ceil(response.data.total / limit));
@@ -74,9 +64,29 @@ const getInterns = async (page: number) => {
   }
 };
 
-onMounted(() => getInterns(currentPage.value));
 watch(
-  () => route.params.page,
-  (newPage) => getInterns(Number(newPage))
+  [() => searchStore.query, () => route.params.page],
+  () => {
+    currentPage.value = route.params.page ? Number(route.params.page) : 1;
+    getInterns(currentPage.value, LIMIT_PER_PAGE);
+  },
+  { immediate: true }
 );
 </script>
+
+<style lang="scss" scoped>
+  .intern-list-table {
+    tr {
+      th,
+      td {
+        @apply p-2 sm:p-[10px];
+      }
+      th {
+        @apply h-[50px] sm:h-[55px];
+      }
+      td {
+        @apply text-sm sm:text-base h-[60px] sm:h-[65px];
+      }
+    }
+  }
+</style>

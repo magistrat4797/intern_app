@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         "light-gray": '#F5F7F9',
-        "base-gray": '#4A4F56',
+        "base-gray": '#4E575F',
         "base-green": '#449672'
       },
       maxWidth: {
