@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
-import InternList from '@/components/InternList.vue';
+import InternListBox from '@/components/InternListBox.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,8 +12,8 @@ const router = createRouter({
     },
     {
       path: '/page-:page',
-      name: 'internList',
-      component: InternList,
+      name: 'internListBox',
+      component: InternListBox,
       props: (route) => ({ page: Number(route.params.page) })
     }
   ]

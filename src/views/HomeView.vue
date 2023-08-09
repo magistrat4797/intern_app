@@ -1,9 +1,9 @@
 <template>
   <main>
-    <InternList />
+    <InternListBox />
   </main>
 </template>
 
 <script setup lang="ts">
-import InternList from '@/components/InternList.vue';
+import InternListBox from '@/components/InternListBox.vue';
 </script>
