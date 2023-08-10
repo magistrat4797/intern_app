@@ -4,9 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        "light-gray": '#F5F7F9',
-        "base-gray": '#4E575F',
-        "base-green": '#449672'
+        "base-gray": "#717880",
+        "dark-gray": '#4E575F',
+        "lighter-gray": '#F5F7F9',
+        "light-gray": "#AEB4BC",
+        "base-green": '#449672',
+        "dark-green": '#2A6846'
       },
       maxWidth: {
         container: '1550px'

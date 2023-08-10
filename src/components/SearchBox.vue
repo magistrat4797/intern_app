@@ -1,19 +1,23 @@
 <template>
-  <div class="search-input-group">
-    <form @submit.prevent="searchUsers">
-      <input type="text" v-model="searchQuery" placeholder="Search for users...">
-      <button type="submit">search</button>
-      <!-- <BaseInput v-model="searchQuery" placeholder="Search for users..." /> -->
-      <!-- <BaseButton type="submit">Search</BaseButton> -->
-    </form>
+  <!-- <div class="search-box w-full mt-4 sm:mt-0 sm:max-w-[480px] sm:mr-[20px]"> -->
+  <div class="search-box">
+    <BaseForm @submit.prevent="searchUsers">
+      <InputGroup>
+        <BaseInput :inputClass="'pr-[40px]'" :type="'text'" v-model="searchQuery" :placeholder="'Search for users...'" />
+        <button class="absolute top-0 right-0 text-base-gray hover:text-base-green w-[40px] h-full">
+          <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
+        </button>
+      </InputGroup>
+    </BaseForm>
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useSearchStore } from '@/store/searchStore';
 
-// import BaseInput from '@/components/BaseInput.vue';
-// import BaseButton from '@/components/BaseButton.vue';
+import InputGroup from '@/components/InputGroup.vue';
+import BaseForm from '@/components/BaseForm.vue';
+import BaseInput from '@/components/BaseInput.vue';
 
 const searchQuery = ref('');
 const searchStore = useSearchStore();

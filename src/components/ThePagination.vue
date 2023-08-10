@@ -41,10 +41,10 @@ const {
       @apply pointer-events-none;
     }
     &.disabled {
-      @apply text-base-gray;
+      @apply text-dark-gray;
     }
     &.active, &:hover {
-      @apply sm:text-white sm:bg-base-green sm:border-base-green;
+      @apply text-white bg-base-green border-base-green;
     }
     &.prev {
       @apply rounded-l-md;
