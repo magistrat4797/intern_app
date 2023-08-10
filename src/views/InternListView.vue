@@ -1,5 +1,5 @@
 <template>
-  <main class="intern-list-box flex flex-wrap flex-col justify-center items-center min-h-screen py-6">
+  <main class="intern-list-view flex flex-wrap flex-col justify-center items-center min-h-screen py-6">
     <MainContainer>
       <BaseHeading>
         <h1>User list</h1>

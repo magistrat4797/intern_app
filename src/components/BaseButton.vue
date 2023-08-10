@@ -1,5 +1,5 @@
 <template>
-  <button class="btn bg-base-green px-4 min-h-[40px] rounded-full hover:bg-dark-green text-white" :type="type">
+  <button class="btn bg-base-green px-4 min-h-[40px] rounded hover:bg-dark-green text-white" :type="type">
     <span class="icon mr-4" v-if="icon">
       <FontAwesomeIcon :icon="icon" />
     </span>
