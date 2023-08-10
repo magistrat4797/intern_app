@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
+import InternListView from '@/views/InternListView.vue';
 import InternListBox from '@/components/InternListBox.vue';
 
 const router = createRouter({
@@ -7,14 +7,20 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/page-:page',
-      name: 'internListBox',
-      component: InternListBox,
-      props: (route) => ({ page: Number(route.params.page) })
+      component: InternListView,
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: InternListBox
+        },
+        
+        {
+          path: 'page-:page',
+          name: 'internListBox',
+          component: InternListBox,
+        }
+      ]
     }
   ]
 });

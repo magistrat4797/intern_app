@@ -16,7 +16,12 @@
             </span>
           </td>
           <td>{{ intern.firstName }} {{ intern.lastName }}</td>
-          <td class="rounded-r w-[70px] sm:w-[130px]">btn</td>
+          <td class="rounded-r w-[70px] sm:w-[130px]">
+            <span class="flex items-center">
+              <a href="#" class="mr-2">Edit</a>
+              <button type="button">Delete</button>
+            </span>
+          </td>
         </tr>
       </tbody>
     </table>
