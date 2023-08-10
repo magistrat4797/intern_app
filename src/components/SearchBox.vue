@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="search-box w-full mt-4 sm:mt-0 sm:max-w-[480px] sm:mr-[20px]"> -->
   <div class="search-box">
     <BaseForm @submit.prevent="searchUsers">
       <InputGroup>
