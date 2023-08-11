@@ -7,19 +7,14 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      redirect: '/page-1',
       component: InternListView,
       children: [
         {
-          path: '',
-          name: 'home',
-          component: InternListBox
-        },
-        
-        {
-          path: 'page-:page',
+          path: '/page-:page',
           name: 'internListBox',
           component: InternListBox,
-        }
+        },
       ]
     }
   ]

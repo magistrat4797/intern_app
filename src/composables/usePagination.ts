@@ -20,11 +20,9 @@ export default function usePagination() {
       ? paginationStore.totalPages
       : currentPageNumber.value + 1;
 
-  const getPageLink = (pageNumber: number) => (pageNumber > 1 ? '/page-' + pageNumber : '/');
-  const getNavigationPageLink = (pageNumber: number) =>
-    pageNumber === 1 ? '/' : '/page-' + pageNumber;
+  const getPageLink = (pageNumber: number) => ('/page-' + pageNumber);
 
-  const prevPageLink = computed(() => getNavigationPageLink(getPrevPageNumber()));
+  const prevPageLink = computed(() => getPageLink(getPrevPageNumber()));
   const nextPageLink = computed(() => getPageLink(getNextPageNumber()));
 
   return {

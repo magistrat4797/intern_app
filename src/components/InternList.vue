@@ -1,34 +1,39 @@
 <template>
   <div class="intern-list">
-    <table class="intern-list__table table table-auto w-full text-left">
-      <thead>
-        <tr class="text-dark-gray">
-          <th></th>
-          <th>Full Name</th>
-          <th class="text-center sm:text-left">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="intern in interns" :key="intern.id" class="odd:bg-lighter-gray">
-          <td class="rounded-l w-[60px] sm:w-[130px]">
-            <span class="block avatar overflow-hidden rounded-full w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] bg-gray-200">
-              <img :src="intern.image" />
-            </span>
-          </td>
-          <td>{{ intern.firstName }} {{ intern.lastName }}</td>
-          <td class="rounded-r w-[70px] sm:w-[130px]">
-            <span class="flex items-center justify-center sm:justify-start">
-              <a href="#" class="mr-2 sm:mr-5 text-light-gray hover:text-base-green">
-                <FontAwesomeIcon icon="fa-solid fa-pen-to-square" />
-              </a>
-              <button type="button" @click="openDeleteModal(intern)" class="text-light-gray hover:text-base-green">
-                <FontAwesomeIcon icon="fa-solid fa-trash" />
-              </button>
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="!paginatedInternsList.length">
+      <p class="text-red-600 text-center sm:text-lg">User not found!</p>
+    </div>
+    <div v-else>
+      <table class="intern-list__table table table-auto w-full text-left">
+        <thead>
+          <tr class="text-dark-gray">
+            <th></th>
+            <th>Full Name</th>
+            <th class="text-center sm:text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="intern in paginatedInternsList" :key="intern.id" class="odd:bg-lighter-gray">
+            <td class="rounded-l w-[60px] sm:w-[130px]">
+              <span class="block avatar overflow-hidden rounded-full w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] bg-gray-200">
+                <img :src="intern.image" />
+              </span>
+            </td>
+            <td>{{ intern.firstName }} {{ intern.lastName }}</td>
+            <td class="rounded-r w-[70px] sm:w-[130px]">
+              <span class="flex items-center justify-center sm:justify-start">
+                <a href="#" class="mr-2 sm:mr-5 text-light-gray hover:text-base-green">
+                  <FontAwesomeIcon icon="fa-solid fa-pen-to-square" />
+                </a>
+                <button type="button" @click="openDeleteModal(intern)" class="text-light-gray hover:text-base-green">
+                  <FontAwesomeIcon icon="fa-solid fa-trash" />
+                </button>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <BaseModal 
        v-model="showModal"
        title="Delete the intern"
@@ -47,88 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-
-import axios from 'axios';
-import { useRoute } from 'vue-router';
-
-import { usePaginationStore } from '@/store/paginationStore';
-import { useSearchStore } from '@/store/searchStore';
-
+import useInterns from '@/composables/useInterns';
 
 import BaseModal from '@/components/BaseModal.vue';
 import BaseButton from '@/components/BaseButton.vue';
-import type { Intern } from '@/models/intern';
 
-const searchStore = useSearchStore();
-const route = useRoute();
-const paginationStore = usePaginationStore();
-const interns = ref<Intern[]>([]);
-const internToDelete = ref<Intern | null>(null);
-const showModal = ref(false);
-
-const LIMIT_PER_PAGE = 8;
-
-let currentPage = ref(route.params.page ? Number(route.params.page) : 1);
-
-const getInterns = async (page: number, limit: number) => {
-  const skip = limit * (page - 1);
-  let API_URL;
-  if (searchStore.query) {
-    API_URL = `https://dummyjson.com/users/search?q=${searchStore.query}&limit=${limit}&skip=${skip}`;
-  } else {
-    API_URL = `https://dummyjson.com/users?limit=${limit}&skip=${skip}`;
-  }
-
-  try {
-    const response = await axios.get(API_URL);
-    if (response.status >= 200 && response.status < 300) {
-      const users = response.data.users as Intern[];
-      paginationStore.setTotalPages(Math.ceil(response.data.total / limit));
-      interns.value = users;
-    } else {
-      console.error('HTTP error:', response.status);
-    }
-  } catch (error) {
-    console.error('Network error:', error);
-  }
-};
-
-const openDeleteModal = (intern: Intern) => {
-  internToDelete.value = intern;
-  showModal.value = true;
-};
-
-const confirmDelete = () => {
-  if(internToDelete.value) {
-    deleteIntern(internToDelete.value.id);
-    showModal.value = false;
-    internToDelete.value = null;
-  }
-};
-
-const deleteIntern = async (id: number) => {
-    try {
-        const response = await axios.delete(`https://dummyjson.com/users/${id}`);
-        if (response.status >= 200 && response.status < 300 && response.data.isDeleted) {
-            console.log('User deleted successfully');
-            interns.value = interns.value.filter(intern => intern.id !== id);
-        } else {
-            console.error('HTTP error:', response.status);
-        }
-    } catch(error) {
-        console.error('Network error:', error);
-    }
-};
-
-watch(
-  [() => searchStore.query, () => route.params.page],
-  () => {
-    currentPage.value = route.params.page ? Number(route.params.page) : 1;
-    getInterns(currentPage.value, LIMIT_PER_PAGE);
-  },
-  { immediate: true }
-);
+const { paginatedInternsList, internToDelete, showModal, confirmDelete, openDeleteModal } = useInterns();
 </script>
 
 <style lang="scss" scoped>

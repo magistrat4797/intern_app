@@ -13,15 +13,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useSearchStore } from '@/store/searchStore';
+import { useRouter } from 'vue-router';
 
 import InputGroup from '@/components/InputGroup.vue';
 import BaseForm from '@/components/BaseForm.vue';
 import BaseInput from '@/components/BaseInput.vue';
 
+const router = useRouter();
 const searchQuery = ref('');
 const searchStore = useSearchStore();
 
-const searchUsers = () => {
+const searchUsers = async () => {
+  await router.push({ name: 'internListBox', params: { page: 1 } });
   searchStore.setQuery(searchQuery.value);
 };
 </script>
