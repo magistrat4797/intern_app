@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import InternListView from '@/views/InternListView.vue';
+import AddInternView from '@/views/AddInternView.vue';
+
 import InternListBox from '@/components/InternListBox.vue';
 
 const router = createRouter({
@@ -16,7 +18,11 @@ const router = createRouter({
           component: InternListBox,
         },
       ]
-    }
+    },
+    {
+      path: '/add-intern',
+      component: AddInternView,
+    },
   ]
 });
 

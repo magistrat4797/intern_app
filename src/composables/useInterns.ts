@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { usePaginationStore } from '@/store/paginationStore';
 import { useSearchStore } from '@/store/searchStore';
 
-import type { Intern } from '@/models/intern';
+import type { Intern, NewIntern } from '@/models/intern';
 
 export default function useInterns() {
   const LIMIT_PER_PAGE: number = 8;
@@ -20,41 +20,95 @@ export default function useInterns() {
   const internToDelete = ref<Intern | null>(null);
   const showModal = ref<boolean>(false);
 
-  const deletedInterns = ref<number[]>(JSON.parse(localStorage.getItem('deletedInterns') || '[]'));
-
   const currentPage = computed<number>(() => Number(route.params.page || 1));
 
-  const getInterns = async (): Promise<void> => {
-      try {
-          const response = await axios.get(`https://dummyjson.com/users?limit=0`);
-          const allUsers: Intern[] = response.data.users;
-          fullInternsList.value = allUsers.filter(
-              (intern: Intern) => !deletedInterns.value.includes(intern.id)
-          );
-          filterAndPaginateInterns();
-      } catch (error) {
-          console.error('Network error:', error);
-      }
+  const loadInternsFromStorage = () => {
+    const deletedInterns = ref<number[]>(JSON.parse(sessionStorage.getItem('deletedInterns') || '[]'));
+    const addedInterns = ref<Intern[]>(JSON.parse(sessionStorage.getItem('addedInterns') || '[]'));
+
+    fullInternsList.value = JSON.parse(sessionStorage.getItem('fullInternsList') || '[]');
+    return { deletedInterns, addedInterns };
   };
 
+  const { deletedInterns, addedInterns } = loadInternsFromStorage();
+
+  const fetchData = async (): Promise<Intern[]> => {
+    const response = await axios.get('https://dummyjson.com/users?limit=0');
+    return response.data.users;
+  };
+  
+  const getInterns = async (): Promise<void> => {
+    const allUsers = await fetchData();
+      
+    const validUsers = allUsers.filter(user => !deletedInterns.value.includes(user.id));
+      
+    fullInternsList.value = [...validUsers, ...addedInterns.value];
+    
+    filterAndPaginateInterns();
+};
+
   const filterAndPaginateInterns = async (): Promise<void> => {
-      const regex = new RegExp(searchStore.query, 'i');
-      const filteredInterns = fullInternsList.value.filter((intern: Intern) =>
-          regex.test(intern.firstName) || regex.test(intern.lastName)
-      );
-      paginateInterns(filteredInterns);
-      if (paginatedInternsList.value.length === 0 && currentPage.value > 1) {
-          router.replace({ name: 'internListBox', params: { page: currentPage.value - 1 } });
-      }
+    const regex = new RegExp(searchStore.query, 'i');
+    
+    const filteredInterns = fullInternsList.value.filter(
+      intern => regex.test(intern.firstName) || regex.test(intern.lastName)
+    );
+
+    paginateInterns(filteredInterns);
+
+    if (paginatedInternsList.value.length === 0 && currentPage.value > 1) {
+      router.replace({ name: 'internListBox', params: { page: currentPage.value - 1 } });
+    }
   };
 
   const paginateInterns = (internsList: Intern[]): void => {
-      const start: number = (currentPage.value - 1) * LIMIT_PER_PAGE;
-      const end: number = start + LIMIT_PER_PAGE;
-      paginatedInternsList.value = internsList.slice(start, end);
-      paginationStore.setTotalPages(Math.ceil(internsList.length / LIMIT_PER_PAGE));
+    const start = (currentPage.value - 1) * LIMIT_PER_PAGE;
+    const end = start + LIMIT_PER_PAGE;
+    
+    paginatedInternsList.value = internsList.slice(start, end);
+    
+    paginationStore.setTotalPages(Math.ceil(internsList.length / LIMIT_PER_PAGE));
   };
 
+  // Now just use fullInternsList for all other operations
+  const deleteIntern = (id: number): void => {
+    const index = fullInternsList.value.findIndex(intern => intern.id === id);
+    
+    if (index !== -1) {
+      fullInternsList.value.splice(index, 1);
+      
+      sessionStorage.setItem('fullInternsList', JSON.stringify(fullInternsList.value));
+
+      updateStorageAfterDeletion(id);
+      
+      filterAndPaginateInterns();
+    }
+  };
+  
+  const updateStorageAfterDeletion = (id: number) => {
+    deletedInterns.value.push(id);
+    
+    const addedInternIndex = addedInterns.value.findIndex(intern => intern.id === id);
+    if (addedInternIndex !== -1) {
+      addedInterns.value.splice(addedInternIndex, 1);
+    }
+    
+    sessionStorage.setItem('deletedInterns', JSON.stringify(deletedInterns.value));
+    sessionStorage.setItem('addedInterns', JSON.stringify(addedInterns.value));
+  };
+  
+  const addIntern = (intern: NewIntern): void => {
+    const highestId = Math.max(...fullInternsList.value.map(intern => intern.id));
+    const newIntern = { id: highestId + 1, ...intern };
+    
+    fullInternsList.value.unshift(newIntern);
+    addedInterns.value.unshift(newIntern);
+    
+    sessionStorage.setItem('fullInternsList', JSON.stringify(fullInternsList.value));
+    sessionStorage.setItem('addedInterns', JSON.stringify(addedInterns.value));
+
+    filterAndPaginateInterns();
+};
   const openDeleteModal = (intern: Intern): void => {
       internToDelete.value = intern;
       showModal.value = true;
@@ -68,24 +122,6 @@ export default function useInterns() {
       }
   };
 
-  const deleteIntern = async (id: number): Promise<void> => {
-      try {
-          const response = await axios.delete(`https://dummyjson.com/users/${id}`);
-          if (response.status >= 200 && response.status < 300 && response.data.isDeleted) {
-              deletedInterns.value.push(id);
-              localStorage.setItem('deletedInterns', JSON.stringify(deletedInterns.value));
-              await getInterns();
-              if (paginatedInternsList.value.length === 0) {
-                  searchStore.query = '';
-              }
-          } else {
-              console.error('HTTP error:', response.status);
-          }
-      } catch (error) {
-          console.error('Network error:', error);
-      }
-  };
-
   watchEffect(async () => {
     if (fullInternsList.value.length === 0) {
       await getInterns();
@@ -94,5 +130,5 @@ export default function useInterns() {
     }
   });
 
-  return { paginatedInternsList, internToDelete, showModal, confirmDelete, openDeleteModal };
+  return { paginatedInternsList, internToDelete, showModal, confirmDelete, openDeleteModal, addIntern, deleteIntern, deletedInterns, addedInterns, getInterns, filterAndPaginateInterns, paginateInterns };
 }
