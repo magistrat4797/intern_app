@@ -1,6 +1,9 @@
 <template>
   <div class="intern-list">
-    <div v-if="!paginatedInternsList.length">
+    <div v-if="isLoading">
+      <TheSpinner />
+    </div>
+    <div v-else-if="!paginatedInternsList.length">
       <p class="text-red-600 text-center sm:text-lg">User not found!</p>
     </div>
     <div v-else>
@@ -22,9 +25,9 @@
             <td>{{ intern.firstName }} {{ intern.lastName }}</td>
             <td class="rounded-r w-[70px] sm:w-[130px]">
               <span class="flex items-center justify-center sm:justify-start">
-                <a href="#" class="mr-2 sm:mr-5 text-light-gray hover:text-base-green">
+                <RouterLink :to="`/edit-intern/${intern.id}`" class="mr-2 sm:mr-5 text-light-gray hover:text-base-green">
                   <FontAwesomeIcon icon="fa-solid fa-pen-to-square" />
-                </a>
+                </RouterLink>
                 <button type="button" @click="openDeleteModal(intern)" class="text-light-gray hover:text-base-green">
                   <FontAwesomeIcon icon="fa-solid fa-trash" />
                 </button>
@@ -56,8 +59,10 @@ import useInterns from '@/composables/useInterns';
 
 import BaseModal from '@/components/BaseModal.vue';
 import BaseButton from '@/components/BaseButton.vue';
+import TheSpinner from '@/components/TheSpinner.vue';
 
-const { paginatedInternsList, internToDelete, showModal, confirmDelete, openDeleteModal } = useInterns();
+const { paginatedInternsList, internToDelete, showModal, confirmDelete, openDeleteModal, isLoading } = useInterns();
+
 </script>
 
 <style lang="scss" scoped>

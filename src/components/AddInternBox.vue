@@ -1,10 +1,7 @@
 <template>
   <BaseCard class="intern-form">
-    <BaseHeading>
-      <h1>Add User</h1>
-    </BaseHeading>
     <BaseForm @submit.prevent="submitForm">
-      <BaseInput v-model="newIntern.firstName" label="First Name" required />
+      <BaseInput v-model="newIntern.firstName" label="First Name" variant="outline" required />
       <BaseInput v-model="newIntern.lastName" label="Last Name" required />
       <BaseInput v-model="newIntern.image" label="Image URL" required />
       <BaseButton type="submit">Add User</BaseButton>
@@ -14,7 +11,6 @@
 
 <script setup lang="ts">
 import BaseCard from '@/components/BaseCard.vue';
-import BaseHeading from '@/components/BaseHeading.vue';
 import BaseForm from '@/components/BaseForm.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseButton from '@/components/BaseButton.vue';

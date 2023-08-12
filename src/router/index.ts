@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import InternListView from '@/views/InternListView.vue';
 import AddInternView from '@/views/AddInternView.vue';
+import EditInternView from '@/views/EditInternView.vue';
 
 import InternListBox from '@/components/InternListBox.vue';
 
@@ -23,6 +24,10 @@ const router = createRouter({
       path: '/add-intern',
       component: AddInternView,
     },
+    {
+      path: '/edit-intern/:id',
+      component: EditInternView,
+    }
   ]
 });
 
