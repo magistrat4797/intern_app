@@ -2,7 +2,7 @@
   <div class="intern-list-view flex flex-wrap flex-col justify-center items-center min-h-screen py-6">
     <MainContainer>
       <BaseHeading>
-        <h1>Add new intern</h1>
+        <h1>Add user</h1>
       </BaseHeading>
       <AddInternBox />
     </MainContainer>

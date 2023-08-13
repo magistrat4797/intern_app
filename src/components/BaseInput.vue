@@ -1,5 +1,5 @@
 <template>
-  <label v-if="label" :for="id" :class="['text-dark-gray font-medium mb-1 block', labelClass]">
+  <label v-if="label" :for="id" :class="['text-dark-gray font-medium mb-1 md:mb-2 block', labelClass]">
     {{ label }}
   </label>
   <input 

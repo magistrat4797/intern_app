@@ -10,7 +10,7 @@ import type { Intern, NewIntern } from '@/models/intern';
 
 export default function useInterns() {
 
-  const API_URL = 'https://dummyjson.com/users?limit=0';
+  const API_URL = 'https://reqres.in/api/users';
   const LIMIT_PER_PAGE: number = 8;
 
   const searchStore = useSearchStore();
@@ -25,6 +25,7 @@ export default function useInterns() {
   const showModal = ref(false);
   const isLoading = ref(false);
 
+  const avatarDataUrl = ref('');
   const currentPage = computed<number>(() => Number(route.params.page || 1));
 
   const loadInternsFromStorage = () => {
@@ -36,19 +37,41 @@ export default function useInterns() {
 
     return { deletedInterns, addedInterns, editedIntern };
   };
+  
+  // Definicja funkcji ekstrahuje dane użytkowników z odpowiedzi
+  const getUsersFromResponse = (response: any) => response.data.data;
 
   const { deletedInterns, addedInterns, editedIntern } = loadInternsFromStorage();
-
   const fetchData = async (): Promise<Intern[]> => {
+  
+    // Rozpoczęcie ładowania
     isLoading.value = true;
+  
     try {
-      const response = await axios.get(API_URL);
+      // Pobranie danych z pierwszej strony, aby uzyskać informację o całkowitej liczbie stron
+      const firstPageResponse = await axios.get(`${API_URL}?page=1&per_page=${LIMIT_PER_PAGE}`);
+      
+      // Pobranie całkowitej liczby stron z odpowiedzi
+      const total_pages = firstPageResponse.data.total_pages;
+      
+      // Generowanie tablicy numerów stron
+      const pages = Array.from({ length: total_pages }, (_, i) => i + 1);
+      
+      // Stworzenie tablicy Promise z żądaniami pobrania danych z każdej strony
+      const pagePromises = pages.map(page => axios.get(`${API_URL}?page=${page}&per_page=${LIMIT_PER_PAGE}`));
+      
+      // Czekanie na wykonanie wszystkich żądań i pobranie odpowiedzi
+      const responses = await Promise.all(pagePromises);
+      
+      // Ekstrakcja i połączenie danych o użytkownikach z wszystkich odpowiedzi
+      const allUsers = responses.flatMap(getUsersFromResponse);
+      isLoading.value = false;
+      
+      return allUsers;
+    } catch (error) {
+      console.error(error);
 
       isLoading.value = false;
-      return response.data.users;
-    } catch (error) {
-      isLoading.value = false;
-      console.error(error);
       return [];
     }
   };
@@ -67,7 +90,7 @@ export default function useInterns() {
     const regex = new RegExp(searchStore.query, 'i');
     
     const filteredInterns = fullInternsList.value.filter(
-      intern => regex.test(intern.firstName) || regex.test(intern.lastName)
+      intern => regex.test(intern.first_name) || regex.test(intern.first_name)
     );
 
     paginateInterns(filteredInterns);
@@ -127,9 +150,13 @@ export default function useInterns() {
     filterAndPaginateInterns();
   };
 
-  const getInternForEdit = (id: number): void => {
+  const getInternForEdit = (id: number): Intern | null => {
     const intern = fullInternsList.value.find(intern => intern.id === id)
+  
     editedIntern.value = intern ? { ...intern } : null;
+    avatarDataUrl.value = intern?.avatar ? intern.avatar : '';
+  
+    return editedIntern.value;
   }
 
   const updateIntern = (editedIntern: Intern): void => {
@@ -182,6 +209,7 @@ export default function useInterns() {
   paginateInterns, 
   isLoading, 
   getInternForEdit, 
-  updateIntern
+  updateIntern,
+  avatarDataUrl
 };
 }

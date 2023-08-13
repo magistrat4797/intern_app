@@ -19,10 +19,11 @@
           <tr v-for="intern in paginatedInternsList" :key="intern.id" class="odd:bg-lighter-gray">
             <td class="rounded-l w-[60px] sm:w-[130px]">
               <span class="block avatar overflow-hidden rounded-full w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] bg-gray-200">
-                <img :src="intern.image" />
+                <img v-if="intern.avatar" :src="intern.avatar" />
+                <img v-else src="@/assets/images/default-avatar.png">
               </span>
             </td>
-            <td>{{ intern.firstName }} {{ intern.lastName }}</td>
+            <td>{{ intern.first_name }} {{ intern.last_name }}</td>
             <td class="rounded-r w-[70px] sm:w-[130px]">
               <span class="flex items-center justify-center sm:justify-start">
                 <RouterLink :to="`/edit-intern/${intern.id}`" class="mr-2 sm:mr-5 text-light-gray hover:text-base-green">
@@ -44,7 +45,7 @@
        @confirm="confirmDelete"
      >
        <template #body>
-        <p class="text-md sm:text-lg">Are you sure you want to delete <span class="font-bold">{{ internToDelete?.firstName }} {{ internToDelete?.lastName }}</span>?</p>
+        <p class="text-md sm:text-lg">Are you sure you want to delete <span class="font-bold">{{ internToDelete?.first_name }} {{ internToDelete?.last_name }}</span>?</p>
        </template>
        <template #actions>
           <BaseButton class="mr-3" @click="showModal = false">No</BaseButton>
