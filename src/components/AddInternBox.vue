@@ -1,7 +1,7 @@
 <template>
   <BaseForm @submit.prevent="submitForm" class="add-itern__form">
-    <div class="flex flex-wrap">
-      <div class="w-full md:w-2/3">
+    <div class="flex flex-wrap flex-col-reverse md:flex-row">
+      <div class="w-full mt-4 md:mt-0 md:w-2/3">
         <BaseCard class="md:h-full">
           <div class="flex flex-col justify-between h-full md:pt-12">
             <div class="flex flex-wrap -mx-3">
@@ -30,7 +30,7 @@
           </div>
         </BaseCard>
       </div>
-      <div class="w-full md:w-1/3 pt-4 md:pt-0 md:pl-4 lg:pl-8">
+      <div class="w-full md:w-1/3 md:pl-4 lg:pl-8">
         <BaseCard>
           <div class="flex justify-center items-center pt-2 pb-6 sm:pb-8 md:py-10">
             <span
