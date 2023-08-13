@@ -10,10 +10,22 @@
             <div class="flex flex-col justify-between h-full md:pt-12">
               <div class="flex flex-wrap -mx-3">
                 <div class="w-full sm:w-1/2 px-3">
-                  <BaseInput v-model="editedIntern.first_name" label="First Name" variant="outline" placeholder="First Name" required />
+                  <BaseInput
+                    v-model="editedIntern.first_name"
+                    label="First Name"
+                    variant="outline"
+                    placeholder="First Name"
+                    required
+                  />
                 </div>
                 <div class="mt-4 sm:mt-0 w-full sm:w-1/2 px-3">
-                  <BaseInput v-model="editedIntern.last_name" label="Last Name" variant="outline" placeholder="First Name" required />
+                  <BaseInput
+                    v-model="editedIntern.last_name"
+                    label="Last Name"
+                    variant="outline"
+                    placeholder="First Name"
+                    required
+                  />
                 </div>
               </div>
               <div class="mt-6 md:mt-0">
@@ -26,12 +38,19 @@
       <div class="w-full md:w-1/3 pt-4 md:pt-0 md:pl-4 lg:pl-8">
         <BaseCard>
           <div class="flex justify-center items-center pt-2 pb-6 sm:pb-8 md:py-10">
-            <span class="block w-[150px] h-[150px] md:mb-10 rounded-full overflow-hidden border-2 outline outline-2 outline-[#E7EAEE] border-lighter-gray">
-              <img v-if="avatarDataUrl" :src="avatarDataUrl">
-              <img v-else src="@/assets/images/default-avatar-2.png">
+            <span
+              class="block w-[150px] h-[150px] md:mb-10 rounded-full overflow-hidden border-2 outline outline-2 outline-[#E7EAEE] border-lighter-gray"
+            >
+              <img v-if="avatarDataUrl" :src="avatarDataUrl" />
+              <img v-else src="@/assets/images/default-avatar-2.png" />
             </span>
           </div>
-          <FileInput class="w-full" title="Change Photo" icon="fa-solid fa-camera" @change="onAvatarChange" />
+          <FileInput
+            class="w-full"
+            title="Change Photo"
+            icon="fa-solid fa-camera"
+            @change="onAvatarChange"
+          />
         </BaseCard>
       </div>
     </div>

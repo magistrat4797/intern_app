@@ -17,7 +17,7 @@ $spinner-size: 25px;
   width: $spinner-size;
   height: $spinner-size;
   border-radius: 50%;
-  background: conic-gradient(#fff 10%, #4E575F);
+  background: conic-gradient(#fff 10%, #4e575f);
   mask-image: radial-gradient(farthest-side, #0000 calc(100% - 4px), #fff 0);
   animation: spinner 0.7s infinite linear;
 }

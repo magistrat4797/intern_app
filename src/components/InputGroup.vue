@@ -1,5 +1,5 @@
 <template>
   <div class="input-group relative">
-    <slot/>
+    <slot />
   </div>
 </template>

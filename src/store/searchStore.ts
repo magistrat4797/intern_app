@@ -7,6 +7,6 @@ export const useSearchStore = defineStore('search', {
   actions: {
     setQuery(query: string) {
       this.query = query;
-    },
-  },
+    }
+  }
 });

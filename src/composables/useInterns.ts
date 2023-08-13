@@ -7,9 +7,7 @@ import { useSearchStore } from '@/store/searchStore';
 
 import type { Intern, NewIntern } from '@/models/intern';
 
-
 export default function useInterns() {
-
   const API_URL = 'https://reqres.in/api/users';
   const LIMIT_PER_PAGE: number = 8;
 
@@ -29,44 +27,41 @@ export default function useInterns() {
   const currentPage = computed<number>(() => Number(route.params.page || 1));
 
   const loadInternsFromStorage = () => {
-    const deletedInterns = ref<number[]>(JSON.parse(sessionStorage.getItem('deletedInterns') || '[]'));
+    const deletedInterns = ref<number[]>(
+      JSON.parse(sessionStorage.getItem('deletedInterns') || '[]')
+    );
     const addedInterns = ref<Intern[]>(JSON.parse(sessionStorage.getItem('addedInterns') || '[]'));
-    const editedIntern = ref<Intern | null>(JSON.parse(sessionStorage.getItem('editedIntern') || '{}'));
+    const editedIntern = ref<Intern | null>(
+      JSON.parse(sessionStorage.getItem('editedIntern') || '{}')
+    );
 
     fullInternsList.value = JSON.parse(sessionStorage.getItem('fullInternsList') || '[]');
 
     return { deletedInterns, addedInterns, editedIntern };
   };
-  
-  // Definicja funkcji ekstrahuje dane użytkowników z odpowiedzi
+
   const getUsersFromResponse = (response: any) => response.data.data;
 
   const { deletedInterns, addedInterns, editedIntern } = loadInternsFromStorage();
   const fetchData = async (): Promise<Intern[]> => {
-  
-    // Rozpoczęcie ładowania
     isLoading.value = true;
-  
+
     try {
-      // Pobranie danych z pierwszej strony, aby uzyskać informację o całkowitej liczbie stron
       const firstPageResponse = await axios.get(`${API_URL}?page=1&per_page=${LIMIT_PER_PAGE}`);
-      
-      // Pobranie całkowitej liczby stron z odpowiedzi
+
       const total_pages = firstPageResponse.data.total_pages;
-      
-      // Generowanie tablicy numerów stron
+
       const pages = Array.from({ length: total_pages }, (_, i) => i + 1);
-      
-      // Stworzenie tablicy Promise z żądaniami pobrania danych z każdej strony
-      const pagePromises = pages.map(page => axios.get(`${API_URL}?page=${page}&per_page=${LIMIT_PER_PAGE}`));
-      
-      // Czekanie na wykonanie wszystkich żądań i pobranie odpowiedzi
+
+      const pagePromises = pages.map((page) =>
+        axios.get(`${API_URL}?page=${page}&per_page=${LIMIT_PER_PAGE}`)
+      );
+
       const responses = await Promise.all(pagePromises);
-      
-      // Ekstrakcja i połączenie danych o użytkownikach z wszystkich odpowiedzi
+
       const allUsers = responses.flatMap(getUsersFromResponse);
       isLoading.value = false;
-      
+
       return allUsers;
     } catch (error) {
       console.error(error);
@@ -75,12 +70,12 @@ export default function useInterns() {
       return [];
     }
   };
-  
+
   const getInterns = async (): Promise<void> => {
     const allUsers = await fetchData();
-      
-    const validUsers = allUsers.filter(user => !deletedInterns.value.includes(user.id));
-      
+
+    const validUsers = allUsers.filter((user) => !deletedInterns.value.includes(user.id));
+
     fullInternsList.value = [...validUsers, ...addedInterns.value];
 
     filterAndPaginateInterns();
@@ -88,9 +83,9 @@ export default function useInterns() {
 
   const filterAndPaginateInterns = async (): Promise<void> => {
     const regex = new RegExp(searchStore.query, 'i');
-    
+
     const filteredInterns = fullInternsList.value.filter(
-      intern => regex.test(intern.first_name) || regex.test(intern.first_name)
+      (intern) => regex.test(intern.first_name) || regex.test(intern.first_name)
     );
 
     paginateInterns(filteredInterns);
@@ -105,20 +100,20 @@ export default function useInterns() {
     const end = start + LIMIT_PER_PAGE;
 
     paginatedInternsList.value = internsList.slice(start, end);
-    
+
     paginationStore.setTotalPages(Math.ceil(internsList.length / LIMIT_PER_PAGE));
   };
 
   const deleteIntern = (id: number): void => {
-    const index = fullInternsList.value.findIndex(intern => intern.id === id);
-    
+    const index = fullInternsList.value.findIndex((intern) => intern.id === id);
+
     if (index !== -1) {
       fullInternsList.value.splice(index, 1);
-      
+
       sessionStorage.setItem('fullInternsList', JSON.stringify(fullInternsList.value));
 
       updateStorageAfterDeletion(id);
-      
+
       filterAndPaginateInterns();
     }
   };
@@ -126,7 +121,7 @@ export default function useInterns() {
   const updateStorageAfterDeletion = (id: number) => {
     deletedInterns.value.push(id);
 
-    const addedInternIndex = addedInterns.value.findIndex(intern => intern.id === id);
+    const addedInternIndex = addedInterns.value.findIndex((intern) => intern.id === id);
     if (addedInternIndex !== -1) {
       addedInterns.value.splice(addedInternIndex, 1);
     }
@@ -136,7 +131,7 @@ export default function useInterns() {
   };
 
   const addIntern = (intern: NewIntern): void => {
-    const highestId = Math.max(...fullInternsList.value.map(intern => intern.id));
+    const highestId = Math.max(...fullInternsList.value.map((intern) => intern.id));
     const newIntern = { id: highestId + 1, ...intern };
 
     fullInternsList.value.unshift(newIntern);
@@ -151,16 +146,16 @@ export default function useInterns() {
   };
 
   const getInternForEdit = (id: number): Intern | null => {
-    const intern = fullInternsList.value.find(intern => intern.id === id)
-  
+    const intern = fullInternsList.value.find((intern) => intern.id === id);
+
     editedIntern.value = intern ? { ...intern } : null;
     avatarDataUrl.value = intern?.avatar ? intern.avatar : '';
-  
+
     return editedIntern.value;
-  }
+  };
 
   const updateIntern = (editedIntern: Intern): void => {
-    const index = fullInternsList.value.findIndex(intern => intern.id === editedIntern.id);
+    const index = fullInternsList.value.findIndex((intern) => intern.id === editedIntern.id);
     if (index !== -1) {
       fullInternsList.value.splice(index, 1, editedIntern);
 
@@ -172,16 +167,16 @@ export default function useInterns() {
   };
 
   const openDeleteModal = (intern: Intern): void => {
-      internToDelete.value = intern;
-      showModal.value = true;
+    internToDelete.value = intern;
+    showModal.value = true;
   };
 
   const confirmDelete = async (): Promise<void> => {
-      if (internToDelete.value) {
-          await deleteIntern(internToDelete.value.id);
-          showModal.value = false;
-          internToDelete.value = null;
-      }
+    if (internToDelete.value) {
+      await deleteIntern(internToDelete.value.id);
+      showModal.value = false;
+      internToDelete.value = null;
+    }
   };
 
   watchEffect(async () => {
@@ -193,23 +188,23 @@ export default function useInterns() {
     }
   });
 
-  return { 
-  paginatedInternsList, 
-  internToDelete, 
-  showModal, 
-  confirmDelete, 
-  openDeleteModal, 
-  addIntern, 
-  deleteIntern, 
-  deletedInterns,
-  addedInterns, 
-  editedIntern,
-  getInterns, 
-  filterAndPaginateInterns, 
-  paginateInterns, 
-  isLoading, 
-  getInternForEdit, 
-  updateIntern,
-  avatarDataUrl
-};
+  return {
+    paginatedInternsList,
+    internToDelete,
+    showModal,
+    confirmDelete,
+    openDeleteModal,
+    addIntern,
+    deleteIntern,
+    deletedInterns,
+    addedInterns,
+    editedIntern,
+    getInterns,
+    filterAndPaginateInterns,
+    paginateInterns,
+    isLoading,
+    getInternForEdit,
+    updateIntern,
+    avatarDataUrl
+  };
 }

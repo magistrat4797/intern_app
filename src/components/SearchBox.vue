@@ -2,7 +2,12 @@
   <div class="search-box">
     <BaseForm @submit.prevent="searchUsers">
       <InputGroup>
-        <BaseInput inputClass="pr-[40px]" type="text" v-model="searchQuery" placeholder="Search for users..." />
+        <BaseInput
+          inputClass="pr-[40px]"
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search for users..."
+        />
         <button class="absolute top-0 right-0 text-base-gray hover:text-base-green w-[40px] h-full">
           <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
         </button>

@@ -4,18 +4,19 @@
       <FontAwesomeIcon :icon="icon" />
     </span>
     <span>
-      <slot/>
+      <slot />
     </span>
   </button>
 </template>
 
 <script setup lang="ts">
-const linkClasses = 'flex items-center justify-center bg-base-green px-4 min-h-[40px] rounded hover:bg-dark-green text-white';
+const linkClasses =
+  'flex items-center justify-center bg-base-green px-4 min-h-[40px] rounded hover:bg-dark-green text-white';
 
 defineProps({
   type: {
-    type: String as () => "button" | "submit" | "reset",
-    default: "button"
+    type: String as () => 'button' | 'submit' | 'reset',
+    default: 'button'
   },
   icon: String
 });

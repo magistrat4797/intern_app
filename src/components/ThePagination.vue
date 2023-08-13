@@ -1,6 +1,10 @@
 <template>
   <div class="pagination flex flex-wrap items-center justify-center sm:justify-normal mt-5">
-    <router-link :to="prevPageLink" class="pagination__link prev" :class="{ disabled: isFirstPage }">
+    <router-link
+      :to="prevPageLink"
+      class="pagination__link prev"
+      :class="{ disabled: isFirstPage }"
+    >
       &laquo;
     </router-link>
     <router-link
@@ -43,7 +47,8 @@ const {
     &.disabled {
       @apply text-dark-gray;
     }
-    &.active, &:hover {
+    &.active,
+    &:hover {
       @apply text-white bg-base-green border-base-green;
     }
     &.prev {

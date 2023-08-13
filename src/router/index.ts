@@ -16,17 +16,17 @@ const router = createRouter({
         {
           path: '/page-:page',
           name: 'internListBox',
-          component: InternListBox,
-        },
+          component: InternListBox
+        }
       ]
     },
     {
       path: '/add-intern',
-      component: AddInternView,
+      component: AddInternView
     },
     {
       path: '/edit-intern/:id',
-      component: EditInternView,
+      component: EditInternView
     }
   ]
 });

@@ -6,8 +6,10 @@ body {
   @apply bg-lighter-gray;
 }
 
-a, button {
-  &, & > span {
-    transition: ease-in-out .2s;
+a,
+button {
+  &,
+  & > span {
+    transition: ease-in-out 0.2s;
   }
 }

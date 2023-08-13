@@ -4,7 +4,9 @@
       <div class="flex flex-col sm:flex-row justify-between pb-4 mb-2 sm:pb-8 sm:mb-4 border-b">
         <SearchBox class="grow sm:mr-[20px] max-w-[600px]" />
         <div class="flex mt-4 sm:mt-0">
-          <BaseLink to="/add-intern" title="Add user" icon="fa-solid fa-plus" class="rounded-full">Add User</BaseLink>
+          <BaseLink to="/add-intern" title="Add user" icon="fa-solid fa-plus" class="rounded-full"
+            >Add User</BaseLink
+          >
         </div>
       </div>
       <InternList />
