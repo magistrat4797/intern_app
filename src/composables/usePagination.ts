@@ -4,7 +4,10 @@ import { usePaginationStore } from '@/store/paginationStore';
 
 export default function usePagination() {
   const route = useRoute();
+
   const paginationStore = usePaginationStore();
+
+  const limitPerPage: number = 8;
 
   const currentPageNumber = computed(() => Number(route.params.page) || 1);
   const pageNumbers = computed(() =>
@@ -26,6 +29,7 @@ export default function usePagination() {
   const nextPageLink = computed(() => getPageLink(getNextPageNumber()));
 
   return {
+    limitPerPage,
     currentPageNumber,
     pageNumbers,
     isFirstPage,

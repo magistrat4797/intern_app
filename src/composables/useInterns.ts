@@ -1,22 +1,35 @@
-import { computed, ref, watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
 import { usePaginationStore } from '@/store/paginationStore';
 import { useSearchStore } from '@/store/searchStore';
 
+import usePagination from '@/composables/usePagination';
+
 import type { Intern, NewIntern } from '@/models/intern';
 
 export default function useInterns() {
   const API_URL = 'https://reqres.in/api/users';
-  const LIMIT_PER_PAGE: number = 8;
+
+  const { limitPerPage, currentPageNumber } = usePagination();
 
   const searchStore = useSearchStore();
-  const route = useRoute();
-  const router = useRouter();
   const paginationStore = usePaginationStore();
 
-  const fullInternsList = ref<Intern[]>([]);
+  const route = useRoute();
+  const router = useRouter();
+
+  const deletedInterns = ref<number[]>(
+    JSON.parse(sessionStorage.getItem('deletedInterns') || '[]')
+  );
+  const addedInterns = ref<Intern[]>(JSON.parse(sessionStorage.getItem('addedInterns') || '[]'));
+  const editedIntern = ref<Intern | null>(
+    JSON.parse(sessionStorage.getItem('editedIntern') || '{}')
+  );
+  const fullInternsList = ref<Intern[]>(
+    JSON.parse(sessionStorage.getItem('fullInternsList') || '[]')
+  );
   const paginatedInternsList = ref<Intern[]>([]);
   const internToDelete = ref<Intern | null>(null);
 
@@ -24,37 +37,21 @@ export default function useInterns() {
   const isLoading = ref(false);
 
   const avatarDataUrl = ref('');
-  const currentPage = computed<number>(() => Number(route.params.page || 1));
-
-  const loadInternsFromStorage = () => {
-    const deletedInterns = ref<number[]>(
-      JSON.parse(sessionStorage.getItem('deletedInterns') || '[]')
-    );
-    const addedInterns = ref<Intern[]>(JSON.parse(sessionStorage.getItem('addedInterns') || '[]'));
-    const editedIntern = ref<Intern | null>(
-      JSON.parse(sessionStorage.getItem('editedIntern') || '{}')
-    );
-
-    fullInternsList.value = JSON.parse(sessionStorage.getItem('fullInternsList') || '[]');
-
-    return { deletedInterns, addedInterns, editedIntern };
-  };
 
   const getUsersFromResponse = (response: any) => response.data.data;
 
-  const { deletedInterns, addedInterns, editedIntern } = loadInternsFromStorage();
   const fetchData = async (): Promise<Intern[]> => {
     isLoading.value = true;
 
     try {
-      const firstPageResponse = await axios.get(`${API_URL}?page=1&per_page=${LIMIT_PER_PAGE}`);
+      const firstPageResponse = await axios.get(`${API_URL}?page=1&per_page=${limitPerPage}`);
 
       const total_pages = firstPageResponse.data.total_pages;
 
       const pages = Array.from({ length: total_pages }, (_, i) => i + 1);
 
       const pagePromises = pages.map((page) =>
-        axios.get(`${API_URL}?page=${page}&per_page=${LIMIT_PER_PAGE}`)
+        axios.get(`${API_URL}?page=${page}&per_page=${limitPerPage}`)
       );
 
       const responses = await Promise.all(pagePromises);
@@ -90,18 +87,18 @@ export default function useInterns() {
 
     paginateInterns(filteredInterns);
 
-    if (paginatedInternsList.value.length === 0 && currentPage.value > 1) {
-      router.replace({ name: 'internListBox', params: { page: currentPage.value - 1 } });
+    if (paginatedInternsList.value.length === 0 && currentPageNumber.value > 1) {
+      router.replace({ name: 'internListBox', params: { page: currentPageNumber.value - 1 } });
     }
   };
 
   const paginateInterns = (internsList: Intern[]): void => {
-    const start = (currentPage.value - 1) * LIMIT_PER_PAGE;
-    const end = start + LIMIT_PER_PAGE;
+    const start = (currentPageNumber.value - 1) * limitPerPage;
+    const end = start + limitPerPage;
 
     paginatedInternsList.value = internsList.slice(start, end);
 
-    paginationStore.setTotalPages(Math.ceil(internsList.length / LIMIT_PER_PAGE));
+    paginationStore.setTotalPages(Math.ceil(internsList.length / limitPerPage));
   };
 
   const deleteIntern = (id: number): void => {

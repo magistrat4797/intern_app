@@ -39,7 +39,7 @@
         <BaseCard>
           <div class="flex justify-center items-center pt-2 pb-6 sm:pb-8 md:py-10">
             <span
-              class="block w-[150px] h-[150px] md:mb-10 rounded-full overflow-hidden border-2 outline outline-2 outline-[#E7EAEE] border-lighter-gray"
+              class="avatar block w-[150px] h-[150px] md:mb-10 rounded-full overflow-hidden border-2 outline outline-2 outline-[#E7EAEE] border-lighter-gray"
             >
               <img v-if="avatarDataUrl" :src="avatarDataUrl" />
               <img v-else src="@/assets/images/default-avatar-2.png" />
