@@ -205,3 +205,35 @@ export default function useInterns() {
     avatarDataUrl
   };
 }
+
+/*
+
+Opisy metod:
+
+1. `getUsersFromResponse` - ekstrahuje i zwraca listę użytkowników z odpowiedzi serwera.
+
+2. `fetchData` - pobiera dane z serwera. Najpierw wykonuje żądanie do API dla pierwszej strony wiele razy, aż do osiągnięcia łącznej liczby stron. Wszystkie użytkownicy są następnie zbierani i zwracani. 
+
+3. `getInterns` - pobiera całą listę użytkowników za pomocą `fetchData`, usuwa użytkowników, którzy zostali wcześniej usunięci, a następnie dodaje nowo dodanych użytkowników. 
+
+4. `filterAndPaginateInterns` - filtruje listę użytkowników na podstawie zapytania wyszukiwania, a następnie paginuje wyniki. 
+
+5. `paginateInterns` - dzieli pełną listę użytkowników na strony.
+
+6. `deleteIntern` - usuwa użytkownika z pełnej listy użytkowników i aktualizuje sessionStorage.
+
+7. `updateStorageAfterDeletion` - dodaje id usuniętych użytkowników do tablicy "deletedInterns" oraz usuwa ich z tablicy "addedInterns", jeżeli tam się znajdowali. 
+
+8. `addIntern` - dodaje nowego użytkownika na początek listy, aktualizuje sessionStorage, następnie czysci pole wyszukiwania i filtruje wyniki.
+
+9. `getInternForEdit` - znajduje użytkownika o podanym id w pełnej liście użytkowników, aby można go było edytować.
+
+10. `updateIntern` - aktualizuje listę użytkowników po edycji, a następnie aktualizuje sessionStorage.
+
+11. `openDeleteModal` - otwiera moduł potwierdzenia usuwania dla określonego użytkownika.
+
+12. `confirmDelete` - usunie użytkownika i zamknie okno potwierdzenia.
+
+13. `watchEffect` - monitoruje zmiany na pełnej liście użytkowników i wykonuje właściwe działania na podstawie tych zmian. 
+
+*/

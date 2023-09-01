@@ -1,5 +1,5 @@
 <template>
-  <div class="pagination flex flex-wrap items-center justify-center sm:justify-normal mt-5">
+  <div class="pagination flex flex-wrap items-center justify-center sm:justify-normal mt-5" v-if="paginatedInternsList.length">
     <router-link
       :to="prevPageLink"
       class="pagination__link prev"
@@ -24,6 +24,11 @@
 
 <script setup lang="ts">
 import usePagination from '@/composables/usePagination';
+import useInterns from '@/composables/useInterns';
+
+const {
+  paginatedInternsList,
+} = useInterns();
 
 const {
   currentPageNumber,
